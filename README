@@ -1,3 +1,13 @@
-## Carpiem
+Carpiem
 
-# Social activity board web application for users to "seize the day", or "carpe diem".
+Social activity board web application for users to "seize the day", or "carpe diem".
+
+Technologies:
+
+- Frontend:
+    React/Vite
+
+- Backend:
+    Node.js/Express
+    PostgreSQL/Prisma
+    AWS S3
