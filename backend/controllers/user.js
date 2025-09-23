@@ -67,7 +67,8 @@ async function updateUsername(newUsername, email) {
       throw new Error(`'${field}' already exists`);
     }
 
-    if (error.code === "P2025") throw new Error(`User with email '${email}' not found`);
+    if (error.code === "P2025")
+      throw new Error(`User with email '${email}' not found`);
 
     // throw error;
   }
@@ -82,10 +83,34 @@ async function deleteUser(email) {
   } catch (error) {
     console.error("Error deleting user:", error);
 
-    if (error.code === "P2025") throw new Error(`User with email '${email}' not found`);
+    if (error.code === "P2025")
+      throw new Error(`User with email '${email}' not found`);
 
     // throw error;
   }
 }
 
-module.exports = { createUser, findUser, updateUsername, deleteUser };
+async function createPost(email, activity) {}
+
+async function deletePost(email, activity) {}
+
+async function addFollower(email, follower) {}
+
+async function deleteFollower(email, follower) {}
+
+async function addFollowing(email, following) {}
+
+async function deleteFollowing(email, following) {}
+
+module.exports = {
+  createUser,
+  findUser,
+  updateUsername,
+  deleteUser,
+  createPost,
+  deletePost,
+  addFollower,
+  deleteFollower,
+  addFollowing,
+  deleteFollowing,
+};
