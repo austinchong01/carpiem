@@ -107,10 +107,28 @@ async function createPost(email, title, description) {
   } catch (error) {
     console.error("Error creating activity post:", error);
 
-    if (error.code === "P2025") {
-      throw new Error(`User with email '${email}' not found`);
-    }
+    // throw error;
+  }
+}
 
+async function findPost(email, activityId) {
+  try {
+    const user = await findUser(email);
+
+    const foundActivity = await prisma.activity.findUnique({
+      where: {
+        id: activityId,
+        userId: user.id,
+      },
+    });
+
+    if (!foundActivity)
+      throw new Error(`Activity ID with '${email}' not found`);
+
+    console.log("Activity found successfully:", foundActivity);
+    return foundActivity;
+  } catch (error) {
+    console.error("Error finding activity:", error);
     // throw error;
   }
 }
@@ -131,9 +149,28 @@ async function deletePost(email, activityId) {
   } catch (error) {
     console.error("Error deleting activity post:", error);
 
-    if (error.code === "P2025") {
+    if (error.code === "P2025")
       throw new Error(`Activity post with ID '${activityId}' not found`);
-    }
+
+    // throw error;
+  }
+}
+
+async function updatePost(email, activityId, title, description) {
+  try {
+    const user = await findUser(email);
+    const updatedPost = await prisma.activity.update({
+      where: { id: activityId, userId: user.id},
+      data: { title, description },
+    });
+
+    console.log("Activity updated successfully:", updatedPost);
+    return updatedPost;
+  } catch (error) {
+    console.error("Error updating activity:", error);
+
+    if (error.code === "P2025")
+      throw new Error(`Activity post with ID '${activityId}' not found with user`);
 
     // throw error;
   }
@@ -283,6 +320,8 @@ module.exports = {
   updateUsername,
   deleteUser,
   createPost,
+  findPost,
+  updatePost,
   deletePost,
   addFollower,
   deleteFollower,

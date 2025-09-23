@@ -5,6 +5,8 @@ const {
   updateUsername,
   deleteUser,
   createPost,
+  findPost,
+  updatePost,
   deletePost,
   addFollower,
   deleteFollower,
@@ -15,7 +17,7 @@ const {
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-    deleteFollowing("one@gmail.com", "two@gmail.com");
+    updatePost("aweston2@gmail.com", 3, "UPDATED", "UPDATED");
 });
 
 module.exports = router;
