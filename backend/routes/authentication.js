@@ -3,7 +3,8 @@ const { createUser } = require('../controllers/user');
 
 const router = express.Router();
 
-router.post('/', async(req, res) => {
+router.get('/', async(req, res) => {
     const user = createUser("aweston", "aweston@gmail.com", "asdf");
-    console.log(user);
 })
+
+module.exports = router;
