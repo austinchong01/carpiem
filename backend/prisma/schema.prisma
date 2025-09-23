@@ -21,9 +21,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Self-referential many-to-many relationship for followers/following
-  // followers User[] @relation("UserFollows")
-  // following User[] @relation("UserFollows")
+  followers User[] @relation("UserFollows")
+  following User[] @relation("UserFollows")
 
   activities Activity[]
 
@@ -32,6 +31,7 @@ model User {
 
 model Activity {
   id          Int          @id @default(autoincrement())
+  title       String
   description String?
   createdAt   DateTime     @default(now())
 

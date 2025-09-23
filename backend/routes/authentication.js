@@ -1,11 +1,21 @@
-const express = require('express');
-const { createUser, findUser, updateUsername, deleteUser } = require('../controllers/user');
+const express = require("express");
+const {
+  createUser,
+  findUser,
+  updateUsername,
+  deleteUser,
+  createPost,
+  deletePost,
+  addFollower,
+  deleteFollower,
+  addFollowing,
+  deleteFollowing,
+} = require("../controllers/user");
 
 const router = express.Router();
 
-router.get('/', async(req, res) => {
-    // const user = createUser("aweston2", "aweston2@gmail.com", "test");
-    const deletedUser = updateUsername("aweston2", "aweston3@gmail.com");
-})
+router.get("/", async (req, res) => {
+    deleteFollowing("one@gmail.com", "two@gmail.com");
+});
 
 module.exports = router;

@@ -90,17 +90,192 @@ async function deleteUser(email) {
   }
 }
 
-async function createPost(email, activity) {}
+async function createPost(email, title, description) {
+  try {
+    const user = await findUser(email);
 
-async function deletePost(email, activity) {}
+    const newActivity = await prisma.activity.create({
+      data: {
+        title,
+        description,
+        userId: user.id,
+      },
+    });
 
-async function addFollower(email, follower) {}
+    console.log("Activity post created successfully:", newActivity);
+    return newActivity;
+  } catch (error) {
+    console.error("Error creating activity post:", error);
 
-async function deleteFollower(email, follower) {}
+    if (error.code === "P2025") {
+      throw new Error(`User with email '${email}' not found`);
+    }
 
-async function addFollowing(email, following) {}
+    // throw error;
+  }
+}
 
-async function deleteFollowing(email, following) {}
+async function deletePost(email, activityId) {
+  try {
+    const user = await findUser(email);
+
+    const deletedActivity = await prisma.activity.delete({
+      where: {
+        id: activityId,
+        userId: user.id,
+      },
+    });
+
+    console.log("Activity post deleted successfully:", deletedActivity);
+    return deletedActivity;
+  } catch (error) {
+    console.error("Error deleting activity post:", error);
+
+    if (error.code === "P2025") {
+      throw new Error(`Activity post with ID '${activityId}' not found`);
+    }
+
+    // throw error;
+  }
+}
+
+async function addFollower(email, followerEmail) {
+  try {
+    const user = await findUser(email);
+    const followerUser = await findUser(followerEmail);
+
+    const existingFollowCount = await prisma.user.count({
+      where: {
+        id: user.id,
+        followers: {
+          some: { id: followerUser.id },
+        },
+      },
+    });
+    if (existingFollowCount > 0)
+      throw new Error(`${followerEmail} is already following ${email}`);
+
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        followers: {
+          connect: { id: followerUser.id },
+        },
+      },
+    });
+
+    console.log("Follower added successfully:", updatedUser);
+    return updatedUser;
+  } catch (error) {
+    console.error("Error adding follower:", error);
+
+    // throw error;
+  }
+}
+
+async function deleteFollower(email, followerEmail) {
+  try {
+    const user = await findUser(email);
+    const followerUser = await findUser(followerEmail);
+
+    const existingFollowCount = await prisma.user.count({
+      where: {
+        id: user.id,
+        followers: {
+          some: { id: followerUser.id },
+        },
+      },
+    });
+    if (existingFollowCount === 0) {
+      throw new Error(`${followerEmail} is not following ${email}`);
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        followers: {
+          disconnect: { id: followerUser.id },
+        },
+      },
+    });
+
+    console.log("Follower removed successfully:", updatedUser);
+    return updatedUser;
+  } catch (error) {
+    console.error("Error removing follower:", error);
+
+    // throw error;
+  }
+}
+
+async function addFollowing(email, followingEmail) {
+  try {
+    const user = await findUser(email);
+    const followingUser = await findUser(followingEmail);
+
+    const existingFollowCount = await prisma.user.count({
+      where: {
+        id: user.id,
+        following: {
+          some: { id: followingUser.id },
+        },
+      },
+    });
+    if (existingFollowCount > 0)
+      throw new Error(`${email} is already following ${followingEmail}`);
+
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        following: {
+          connect: { id: followingUser.id },
+        },
+      },
+    });
+
+    console.log("Following added successfully:", updatedUser);
+    return updatedUser;
+  } catch (error) {
+    console.error("Error adding following:", error);
+
+    // throw error;
+  }
+}
+
+async function deleteFollowing(email, followingEmail) {
+  try {
+    const user = await findUser(email);
+    const followingUser = await findUser(followingEmail);
+
+    const existingFollowCount = await prisma.user.count({
+      where: {
+        id: user.id,
+        following: {
+          some: { id: followingUser.id },
+        },
+      },
+    });
+    if (existingFollowCount === 0) {
+      throw new Error(`${email} is not following ${followingEmail}`);
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        following: {
+          disconnect: { id: followingUser.id },
+        },
+      },
+    });
+
+    console.log("Following removed successfully:", updatedUser);
+    return updatedUser;
+  } catch (error) {
+    console.error("Error removing following:", error);
+
+    // throw error;
+  }
+}
 
 module.exports = {
   createUser,
