@@ -133,6 +133,28 @@ async function findPost(email, activityId) {
   }
 }
 
+async function updatePost(email, activityId, title, description) {
+  try {
+    const user = await findUser(email);
+    const updatedPost = await prisma.activity.update({
+      where: { id: activityId, userId: user.id },
+      data: { title, description },
+    });
+
+    console.log("Activity updated successfully:", updatedPost);
+    return updatedPost;
+  } catch (error) {
+    console.error("Error updating activity:", error);
+
+    if (error.code === "P2025")
+      throw new Error(
+        `Activity post with ID '${activityId}' not found with user`
+      );
+
+    // throw error;
+  }
+}
+
 async function deletePost(email, activityId) {
   try {
     const user = await findUser(email);
@@ -151,26 +173,6 @@ async function deletePost(email, activityId) {
 
     if (error.code === "P2025")
       throw new Error(`Activity post with ID '${activityId}' not found`);
-
-    // throw error;
-  }
-}
-
-async function updatePost(email, activityId, title, description) {
-  try {
-    const user = await findUser(email);
-    const updatedPost = await prisma.activity.update({
-      where: { id: activityId, userId: user.id},
-      data: { title, description },
-    });
-
-    console.log("Activity updated successfully:", updatedPost);
-    return updatedPost;
-  } catch (error) {
-    console.error("Error updating activity:", error);
-
-    if (error.code === "P2025")
-      throw new Error(`Activity post with ID '${activityId}' not found with user`);
 
     // throw error;
   }
