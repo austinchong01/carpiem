@@ -1,12 +1,15 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { PrismaClient } = require('@prisma/client');
+const path = require('path');
 
 const app = express();
-const prisma = new PrismaClient();
 
-app.use(cors());
+// Set EJS as view engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// app.use(cors());
 
 // Body parsing middleware
 app.use(express.json());
