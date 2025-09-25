@@ -26,7 +26,21 @@ router.get("/login", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  passport.authenticate('local', (err, user, info) => {
+    // Handle system errors
+    if (err) {
+      console.error('Login error:', err);
+      return res.status(500).send('Login failed');
+    }
+    
+    // Handle authentication failure (wrong credentials)
+    if (!user)
+      return res.status(401).send(info.message);
+    
+    console.log('Login successful for:', user.email);
+    res.send(`Welcome back, ${user.username}!`);
+    
+  })(req, res);
 });
 
 router.get("/register", async (req, res) => {
