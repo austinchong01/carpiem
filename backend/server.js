@@ -1,13 +1,12 @@
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
 const path = require('path');
+const passport = require('passport');
 
 const app = express();
 
-// Set EJS as view engine
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+// Passport
+app.use(passport.initialize());
 
 // app.use(cors());
 
@@ -17,6 +16,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/', require('./routes/authentication'));
+
+// Set EJS as view engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 // Start server
 const PORT = process.env.PORT;

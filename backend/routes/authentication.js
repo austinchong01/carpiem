@@ -13,33 +13,37 @@ const {
   addFollowing,
   deleteFollowing,
 } = require("../controllers/user");
+const passport = require("../controllers/passport")
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-    // addFollower("aweston2@gmail.com", "two@gmail.com");
+  // addFollower("aweston2@gmail.com", "two@gmail.com");
 });
 
-
-
 router.get("/login", async (req, res) => {
-    res.render("login");
+  res.render("login");
 });
 
 router.post("/login", async (req, res) => {
-    console.log(res.email, res.password)
+  const { email, password } = req.body;
 });
 
-
 router.get("/register", async (req, res) => {
-    res.render("register");
+  res.render("register");
 });
 
 router.post("/register", async (req, res) => {
-    
+  const { username, email, password } = req.body;
+
+  try {
+    const newUser = await createUser(username, email, password);
+    console.log(`Welcome to Carpiem, ${newUser.username}!`);
+
+  } catch (error) {
+    console.error("Registration", error);
+  }
 });
-
-
 
 // router.post('/logout', (req, res) => {
 // });

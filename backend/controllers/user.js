@@ -22,17 +22,15 @@ async function createUser(username, email, password) {
       },
     });
 
-    console.log("User created successfully:", user);
+    console.log("User created successfully:", user.username);
     return user;
   } catch (error) {
-    console.error("Error creating user:", error);
-
     if (error.code === "P2002") {
       const field = error.meta?.target?.[0];
       throw new Error(`${field} already exists`);
     }
-
-    // throw error;
+    // console.error("Error creating user:", error);
+    throw error;
   }
 }
 
