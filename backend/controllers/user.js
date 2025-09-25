@@ -4,48 +4,36 @@ const bcrypt = require("bcryptjs");
 const prisma = new PrismaClient();
 
 async function createUser(username, email, password) {
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await prisma.user.create({
-      data: {
-        username,
-        email,
-        password: hashedPassword,
-      },
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+  const user = await prisma.user.create({
+    data: {
+      username,
+      email,
+      password: hashedPassword,
+    },
+    select: {
+      id: true,
+      username: true,
+      email: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
 
-    console.log("User created successfully:", user.username);
-    return user;
-  } catch (error) {
-    if (error.code === "P2002") {
-      const field = error.meta?.target?.[0];
-      throw new Error(`${field} already exists`);
-    }
-    // console.error("Error creating user:", error);
-    throw error;
-  }
+  console.log("User created successfully:", user.username);
+  return user;
 }
 
 async function findUser(email) {
-  try {
-    const foundUser = await prisma.user.findUnique({ where: { email } });
+  const foundUser = await prisma.user.findUnique({ where: { email } });
 
-    if (!foundUser) throw new Error(`User with email '${email}' not found`);
+  if (!foundUser) {
+    throw new Error(`User with email '${email}' not found`);
+  };
 
-    console.log("User found successfully:", foundUser);
-    return foundUser;
-  } catch (error) {
-    console.error("Error finding user:", error);
-    // throw error;
-  }
+  console.log("User found successfully:", foundUser.username);
+  return foundUser;
 }
 
 async function updateUsername(newUsername, email) {
@@ -68,7 +56,7 @@ async function updateUsername(newUsername, email) {
     if (error.code === "P2025")
       throw new Error(`User with email '${email}' not found`);
 
-    // throw error;
+    throw error;
   }
 }
 
@@ -84,7 +72,7 @@ async function deleteUser(email) {
     if (error.code === "P2025")
       throw new Error(`User with email '${email}' not found`);
 
-    // throw error;
+    throw error;
   }
 }
 
@@ -105,7 +93,7 @@ async function createPost(email, title, description) {
   } catch (error) {
     console.error("Error creating activity post:", error);
 
-    // throw error;
+    throw error;
   }
 }
 
@@ -127,7 +115,7 @@ async function findPost(email, activityId) {
     return foundActivity;
   } catch (error) {
     console.error("Error finding activity:", error);
-    // throw error;
+    throw error;
   }
 }
 
@@ -149,7 +137,7 @@ async function updatePost(email, activityId, title, description) {
         `Activity post with ID '${activityId}' not found with user`
       );
 
-    // throw error;
+    throw error;
   }
 }
 
@@ -172,7 +160,7 @@ async function deletePost(email, activityId) {
     if (error.code === "P2025")
       throw new Error(`Activity post with ID '${activityId}' not found`);
 
-    // throw error;
+    throw error;
   }
 }
 
@@ -206,7 +194,7 @@ async function addFollower(email, followerEmail) {
   } catch (error) {
     console.error("Error adding follower:", error);
 
-    // throw error;
+    throw error;
   }
 }
 
@@ -241,7 +229,7 @@ async function deleteFollower(email, followerEmail) {
   } catch (error) {
     console.error("Error removing follower:", error);
 
-    // throw error;
+    throw error;
   }
 }
 
@@ -275,7 +263,7 @@ async function addFollowing(email, followingEmail) {
   } catch (error) {
     console.error("Error adding following:", error);
 
-    // throw error;
+    throw error;
   }
 }
 
@@ -310,7 +298,7 @@ async function deleteFollowing(email, followingEmail) {
   } catch (error) {
     console.error("Error removing following:", error);
 
-    // throw error;
+    throw error;
   }
 }
 
