@@ -14,6 +14,7 @@ const {
   deleteFollowing,
 } = require("../controllers/user");
 const passport = require("../controllers/passport");
+const { generateToken } = require("../controllers/jwt");
 
 const router = express.Router();
 
@@ -40,12 +41,14 @@ router.post("/login", async (req, res) => {
     }
 
     // Handle authentication failure (wrong credentials)
-    if (!user)
-      return res.status(401).send(info.message);
+    if (!user) return res.status(401).send(info.message);
+
+    const token = generateToken(user);
 
     res.json({
       successMessage: `Login successful for ${user.username}!`,
       success: true,
+      token,
       user: user.username,
     });
   })(req, res);

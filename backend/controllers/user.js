@@ -33,11 +33,11 @@ async function createUser(username, email, password) {
   }
 }
 
-async function findUser(email) {
-  const foundUser = await prisma.user.findUnique({ where: { email } });
+async function findUser(id) {
+  const foundUser = await prisma.user.findUnique({ where: { id } });
 
   if (!foundUser) {
-    throw new Error(`User with email '${email}' not found`);
+    throw new Error(`User with id '${id}' not found`);
   };
 
   console.log("User found successfully:", foundUser.username);

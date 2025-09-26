@@ -1,11 +1,8 @@
 const jwt = require('jsonwebtoken');
+const { findUserById } = require('./user');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
-
-if (!JWT_SECRET) {
-  throw new Error('JWT_SECRET environment variable is required');
-}
 
 /**
  * Generate a JWT token for a user
@@ -14,15 +11,13 @@ if (!JWT_SECRET) {
  */
 const generateToken = (user) => {
   const payload = {
-    id: user.id,
-    email: user.email,
-    username: user.username
+    id: user.id
   };
 
   return jwt.sign(payload, JWT_SECRET, {
     expiresIn: JWT_EXPIRES_IN,
     issuer: 'carpiem-app',
-    subject: user.username
+    subject: user.id.toString()
   });
 };
 
@@ -58,8 +53,53 @@ const extractTokenFromHeader = (authHeader) => {
   return authHeader.substring(7); // Remove 'Bearer ' prefix
 };
 
+/**
+ * Middleware to authenticate JWT tokens
+ * Adds user object to req.user if token is valid
+ */
+const authenticateToken = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = extractTokenFromHeader(authHeader);
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        error: 'Access token required'
+      });
+    }
+
+    // Verify the token
+    const decoded = verifyToken(token);
+    
+    // Verify user still exists in database
+    try {
+      const user = await findUser(decoded.id);
+      req.user = {
+        id: user.id,
+        email: user.email
+      };
+    } catch (error) {
+      return res.status(401).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+
+    next();
+  } catch (error) {
+    console.error('JWT Authentication Error:', error.message);
+    
+    return res.status(401).json({
+      success: false,
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   generateToken,
   verifyToken,
-  extractTokenFromHeader
+  extractTokenFromHeader,
+  authenticateToken
 };
