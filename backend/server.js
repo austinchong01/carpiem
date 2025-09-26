@@ -16,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/', require('./routes/authentication'));
+app.use('/api', require('./routes/api'));
 
 // Set EJS as view engine
 app.set('view engine', 'ejs');
