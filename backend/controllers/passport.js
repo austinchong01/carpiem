@@ -24,7 +24,7 @@ passport.use(new LocalStrategy({ usernameField: 'email' },
           // Simulate a system error
           if (email === "error@test.com") {
             throw new Error("Simulated system error");
-          }
+          }g
       const user = await findUser(email);
       
       const isMatch = await bcrypt.compare(password, user.password);
