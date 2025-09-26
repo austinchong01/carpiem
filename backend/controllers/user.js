@@ -4,25 +4,33 @@ const bcrypt = require("bcryptjs");
 const prisma = new PrismaClient();
 
 async function createUser(username, email, password) {
-  const hashedPassword = await bcrypt.hash(password, 10);
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  const user = await prisma.user.create({
-    data: {
-      username,
-      email,
-      password: hashedPassword,
-    },
-    select: {
-      id: true,
-      username: true,
-      email: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
+    const user = await prisma.user.create({
+      data: {
+        username,
+        email,
+        password: hashedPassword,
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
 
-  console.log("User created successfully:", user.username);
-  return user;
+    console.log("User created successfully:", user.username);
+    return user;
+  } catch (error) {
+    if (error.code === "P2002") {
+      const field = error.meta?.target?.[0];
+      throw new Error(`${field} already exists`);
+    }
+    throw error;
+  }
 }
 
 async function findUser(email) {
@@ -97,6 +105,7 @@ async function createPost(email, title, description) {
   }
 }
 
+// do I need findUser
 async function findPost(email, activityId) {
   try {
     const user = await findUser(email);
@@ -119,6 +128,7 @@ async function findPost(email, activityId) {
   }
 }
 
+// do I need findUser ?
 async function updatePost(email, activityId, title, description) {
   try {
     const user = await findUser(email);
@@ -141,6 +151,7 @@ async function updatePost(email, activityId, title, description) {
   }
 }
 
+// do I need findUser ?
 async function deletePost(email, activityId) {
   try {
     const user = await findUser(email);
@@ -164,6 +175,7 @@ async function deletePost(email, activityId) {
   }
 }
 
+// do I need findUser ?
 async function addFollower(email, followerEmail) {
   try {
     const user = await findUser(email);
@@ -198,6 +210,7 @@ async function addFollower(email, followerEmail) {
   }
 }
 
+// do I need findUser ?
 async function deleteFollower(email, followerEmail) {
   try {
     const user = await findUser(email);
@@ -233,6 +246,7 @@ async function deleteFollower(email, followerEmail) {
   }
 }
 
+// do I need findUser ?
 async function addFollowing(email, followingEmail) {
   try {
     const user = await findUser(email);
@@ -267,6 +281,7 @@ async function addFollowing(email, followingEmail) {
   }
 }
 
+// do I need findUser ?
 async function deleteFollowing(email, followingEmail) {
   try {
     const user = await findUser(email);

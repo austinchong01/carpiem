@@ -21,6 +21,10 @@ const {
 passport.use(new LocalStrategy({ usernameField: 'email' },
   async (email, password, done) => {
     try {
+          // Simulate a system error
+          if (email === "error@test.com") {
+            throw new Error("Simulated system error");
+          }
       const user = await findUser(email);
       
       const isMatch = await bcrypt.compare(password, user.password);
@@ -30,7 +34,9 @@ passport.use(new LocalStrategy({ usernameField: 'email' },
       else
         return done(null, user);
     } catch (error) {
-      return done(null, false, { message: 'LocalStrategy failed' });
+      if (error.message == `User with email '${email}' not found`)
+        return done(null, false, { message: error.message })
+      return done(error, false, {message: error.message});
     }
   }
 ));
