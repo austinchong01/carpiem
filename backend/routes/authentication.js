@@ -1,18 +1,5 @@
 const express = require("express");
-const {
-  createUser,
-  findUser,
-  updateUsername,
-  deleteUser,
-  createPost,
-  findPost,
-  updatePost,
-  deletePost,
-  addFollower,
-  deleteFollower,
-  addFollowing,
-  deleteFollowing,
-} = require("../controllers/user");
+const user = require("../controllers/user");
 const passport = require("../controllers/passport");
 const { generateToken } = require("../controllers/jwt");
 
@@ -61,7 +48,7 @@ router.get("/register", async (req, res) => {
 router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
-    const newUser = await createUser(username, email, password);
+    const newUser = await user.createUser(username, email, password);
     res.json({ success: true, user: newUser.username });
   } catch (error) {
     console.error("Registration:", error.message);
